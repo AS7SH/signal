@@ -6,7 +6,7 @@ import {
     generateAccessToken,
     generateRefreshToken,
 } from "../lib/refreshToken.js";
-import { User } from "../models/user.model.js";
+import { User } from "../models/user/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
