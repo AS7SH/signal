@@ -1,4 +1,4 @@
-import { AppError } from "../lib/AppError";
+import { AppError } from "../lib/AppError.js";
 import { Chat } from "../models/app/chat.model.js";
 import { Message } from "../models/app/message.model.js";
 

@@ -1,14 +1,14 @@
-import { sendResponse } from "src/lib/sendResponse.js";
-import { asyncHandler } from "src/middlewares/AsyncHandler.middleware.js";
+import { sendResponse } from "../lib/sendResponse.js";
+import { asyncHandler } from "../middlewares/AsyncHandler.middleware.js";
 import {
     deleteMessageService,
     editMessageService,
     sendMessageService,
-} from "src/services/message.service.js";
+} from "../services/message.service.js";
 import {
     editMessageSchema,
     sendMessageSchema,
-} from "src/validators/message.validator.js";
+} from "../validators/message.validator.js";
 
 export const sendMessageController = asyncHandler(async (req, res) => {
     const { _id } = req.user;

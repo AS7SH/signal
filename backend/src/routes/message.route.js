@@ -4,7 +4,7 @@ import {
     deleteMessageController,
     editMessageController,
     sendMessageController,
-} from "src/controllers/message.controller.js";
+} from "../controllers/message.controller.js";
 
 const messageRouter = Router()
     .use(ProtectRoute)

@@ -11,8 +11,8 @@ import {
     rejectRequestController,
     sendRequestController,
     unblockUserController,
-} from "../controllers/friends.controller";
-import { ProtectRoute } from "../middlewares/ProtectRoute.middleware";
+} from "../controllers/friends.controller.js";
+import { ProtectRoute } from "../middlewares/ProtectRoute.middleware.js";
 
 const friendsRouter = Router()
     .use(ProtectRoute)
