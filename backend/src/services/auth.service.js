@@ -109,7 +109,7 @@ export const loginService = async (body) => {
     return { user: userData, accessToken };
 };
 
-export const logoutService = async () => {
+export const logoutService = async (refreshToken) => {
     await User.updateOne(
         { refreshToken: refreshToken },
         { $unset: { refreshToken: "" } },

@@ -16,15 +16,10 @@ app.use(
     cors({
         credentials: true,
         origin: ENV.FRONTEND_ORIGIN,
-    }),
-);
-app.use(cookieParser());
-app.use(
-    cors({
-        origin: ENV.FRONTEND_ORIGIN,
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     }),
 );
+app.use(cookieParser());
 
 app.use("/", routes);
 
