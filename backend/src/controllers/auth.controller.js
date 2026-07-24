@@ -1,5 +1,8 @@
 import { sendResponse } from "../lib/sendResponse.js";
-import { setRefreshTokenCookie } from "../lib/refreshToken.js";
+import {
+    clearRefreshTokenCookie,
+    setRefreshTokenCookie,
+} from "../lib/cookies.js";
 import { asyncHandler } from "../middlewares/AsyncHandler.middleware.js";
 import {
     deleteAccountService,
@@ -59,12 +62,7 @@ export const logoutController = asyncHandler(async (req, res) => {
         await logoutService(refreshToken);
     }
 
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: ENV.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-    });
+    clearRefreshTokenCookie(res);
 
     return sendResponse(res, true, 200, "Logged out Successfully");
 });
@@ -84,12 +82,7 @@ export const refreshTokenController = asyncHandler(async (req, res) => {
 export const deleteAccountController = asyncHandler(async (req, res) => {
     await deleteAccountService(req.user);
 
-    res.clearCookie("refreshToken", {
-        httpOnly: true,
-        secure: ENV.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-    });
+    clearRefreshTokenCookie(res);
 
     return sendResponse(res, true, 200, "Account successfully deleted");
 });

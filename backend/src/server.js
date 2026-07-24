@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import { ENV } from "./config/env.config.js";
 import routes from "./routes/index.js";
 import { db } from "./config/db.config.js";
+import { errorHandler } from "./middlewares/ErrorHandler.middleware.js";
 
 const app = express();
 
@@ -22,6 +23,8 @@ app.use(
 app.use(cookieParser());
 
 app.use("/", routes);
+
+app.use(errorHandler);
 
 const PORT = ENV.PORT || 3500;
 

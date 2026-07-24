@@ -2,10 +2,7 @@ import { ENV } from "../config/env.config.js";
 import { sendOTPMail } from "../mails/sendMail.js";
 import { AppError } from "../lib/AppError.js";
 import { getOTP } from "../lib/getOTP.js";
-import {
-    generateAccessToken,
-    generateRefreshToken,
-} from "../lib/refreshToken.js";
+import { generateAccessToken, generateRefreshToken } from "../lib/cookies.js";
 import { User } from "../models/user/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -130,8 +127,11 @@ export const refreshService = async (refreshToken) => {
 
     if (!user) throw new AppError("User not found", 404);
 
-    if (refreshToken !== user.refreshToken)
-        throw new AppError("Unauthorized", 401);
+    if (refreshToken !== user.refreshToken) {
+        user.refreshToken = undefined;
+        await user.save();
+        throw new AppError("Unauthorized - Token compromised", 401);
+    }
 
     user.refreshToken = generateRefreshToken(user._id);
     await user.save();
