@@ -118,7 +118,7 @@ export const refreshService = async (refreshToken) => {
     try {
         decoded = jwt.verify(refreshToken, ENV.JWT_REFRESH_SECRET);
     } catch (jwtError) {
-        throw new AppError("Invalid/Expired Refresh token", 401);
+        throw new AppError("RefreshTokenExpired", 401);
     }
 
     const { _id } = decoded;
@@ -130,7 +130,7 @@ export const refreshService = async (refreshToken) => {
     if (refreshToken !== user.refreshToken) {
         user.refreshToken = undefined;
         await user.save();
-        throw new AppError("Unauthorized - Token compromised", 401);
+        throw new AppError("Unauthorized", 401);
     }
 
     user.refreshToken = generateRefreshToken(user._id);

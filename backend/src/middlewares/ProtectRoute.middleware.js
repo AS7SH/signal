@@ -14,10 +14,7 @@ export const ProtectRoute = asyncHandler(async (req, res, next) => {
     }
 
     if (!token) {
-        throw new AppError(
-            "You are not logged in. Please log in to get access.",
-            401,
-        );
+        throw new AppError("Unauthorized", 401);
     }
 
     try {
@@ -29,8 +26,8 @@ export const ProtectRoute = asyncHandler(async (req, res, next) => {
         next();
     } catch (error) {
         if (error.name === "TokenExpiredError") {
-            throw new AppError("TokenExpired", 401);
+            throw new AppError("AccessTokenExpired", 401);
         }
-        throw new AppError("Invalid token. Please log in again.", 401);
+        throw new AppError("Unauthorized", 401);
     }
 });
