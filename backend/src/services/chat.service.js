@@ -2,6 +2,7 @@ import { Chat } from "../models/app/chat.model.js";
 import { Friend } from "../models/friends/friend.model.js";
 import { User } from "../models/user/user.model.js";
 import { Message } from "../models/app/message.model.js";
+import { AppError } from "../lib/AppError.js";
 
 export const getUserChatsService = async (currentUserId) => {
     const chats = await Chat.find({
@@ -19,12 +20,10 @@ export const getUserChatsService = async (currentUserId) => {
         })
         .sort({ updatedAt: -1 });
 
-    return chats.toObject();
+    return chats;
 };
 
-export const createChatService = async (currentUserId, body) => {
-    const { participantId } = body;
-
+export const createChatService = async (currentUserId, participantId) => {
     const existingOtherUser = await User.findById(participantId);
     if (!existingOtherUser) throw new AppError("the user doesnt exist");
 
@@ -47,7 +46,7 @@ export const createChatService = async (currentUserId, body) => {
     }).populate("participants", "name avatar");
 
     if (existingChat) {
-        return existingChat.toObject();
+        return existingChat;
     }
 
     const chat = await Chat.create({
@@ -55,7 +54,7 @@ export const createChatService = async (currentUserId, body) => {
         createdBy: currentUserId,
     });
 
-    return chat.toObject();
+    return chat;
 };
 
 export const getSingleChatService = async (currentUserId, chatId) => {
@@ -84,8 +83,8 @@ export const getSingleChatService = async (currentUserId, chatId) => {
         });
 
     const data = {
-        chat: chat.toObject(),
-        messages: messages.toObject(),
+        chat: chat,
+        messages: messages,
     };
 
     return data;
@@ -93,7 +92,7 @@ export const getSingleChatService = async (currentUserId, chatId) => {
 
 export const deleteChatService = async (currentUserId, chatId) => {
     const chat = await Chat.findOne({
-        chatId,
+        _id: chatId,
         participants: currentUserId,
     });
 
@@ -128,29 +127,32 @@ export const createGroupChatService = async (currentUserId, body) => {
         participants: allParticipantsIds,
         isGroup: true,
         groupName,
-        groupAdmin: [currentUserId],
+        groupAdmins: [currentUserId],
         createdBy: currentUserId,
     });
 
-    return chat.toObject();
+    return chat;
 };
 
 export const renameGroupService = async (currentUserId, chatId, groupName) => {
     const chat = await Chat.findOne({
         _id: chatId,
         participants: currentUserId,
+        isGroup: true,
     });
 
     if (!chat) {
         throw new AppError("couldn't find the chat");
     }
 
-    if (chat.isGroup && chat.groupAdmins.includes(currentUserId)) {
-        chat.groupName = groupName;
-        await chat.save();
+    if (!chat.groupAdmins.includes(currentUserId)) {
+        throw new AppError("Only Admins can change");
     }
 
-    return chat.toObject();
+    chat.groupName = groupName;
+    await chat.save();
+
+    return chat;
 };
 
 export const addToGroupService = async (
@@ -193,7 +195,7 @@ export const addToGroupService = async (
         { new: true },
     );
 
-    return updatedChat.toObject();
+    return updatedChat;
 };
 
 export const removeFromGroupService = async (
@@ -244,5 +246,5 @@ export const removeFromGroupService = async (
         { new: true },
     );
 
-    return updatedChat.toObject();
+    return updatedChat;
 };

@@ -42,9 +42,9 @@ export const signupService = async (body) => {
 
 export const verifyEmailService = async (body, reqUser) => {
     const { otp } = body;
-    const { _id, email } = reqUser;
+    const { _id } = reqUser;
 
-    const user = await User.findOne({ _id, email });
+    const user = await User.findOne({ _id });
 
     if (!user) throw new AppError("User not found", 404);
 
@@ -67,9 +67,8 @@ export const verifyEmailService = async (body, reqUser) => {
 
 export const sendVerifyEmailService = async (reqUser) => {
     const verificationToken = getOTP();
-    const { _id, email } = reqUser;
-
-    const user = await User.findOne({ _id, email });
+    const { _id } = reqUser;
+    const user = await User.findById(_id);
 
     if (!user) throw new AppError("User not found", 404);
 

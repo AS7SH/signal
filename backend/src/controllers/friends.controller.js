@@ -7,6 +7,8 @@ import {
     deleteFriendService,
     getAllFriendsService,
     getBlockedUsersService,
+    getIncomingRequestsService,
+    getOutgoingRequestsService,
     rejectRequestService,
     sendRequestService,
     unblockUserService,

@@ -10,7 +10,7 @@ const messageRouter = Router()
     .use(ProtectRoute)
 
     .post("/:chatId/send", sendMessageController)
-    .put("/:messageId/edit", editMessageController)
+    .patch("/:messageId/edit", editMessageController)
     .delete("/:messageId/delete", deleteMessageController);
 
 // future

@@ -24,9 +24,10 @@ export const getUserChatsController = asyncHandler(async (req, res) => {
 
 export const createChatController = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const body = createChatSchema(body);
+    const { friendId } = req.params;
+    const validatedData = createChatSchema.parse({ participantId: friendId });
 
-    const response = await createChatService(_id, body);
+    const response = await createChatService(_id, validatedData.participantId);
     return sendResponse(res, true, 200, "created a chat", response);
 });
 
@@ -48,7 +49,7 @@ export const deleteChatController = asyncHandler(async (req, res) => {
 
 export const createGroupChatController = asyncHandler(async (req, res) => {
     const { _id } = req.user;
-    const body = createGroupSchema(body);
+    const body = createGroupSchema.parse(req.body);
 
     const response = await createGroupChatService(_id, body);
     return sendResponse(res, true, 200, "created a group", response);

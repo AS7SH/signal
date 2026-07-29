@@ -12,7 +12,7 @@ export const getAllFriendsService = async (currentUserId) => {
         .sort({ acceptedAt: -1 });
 
     const friends = friendships.map((friendship) => {
-        if (friendship.receiver._id.toString() == userId.toString()) {
+        if (friendship.receiver._id.toString() == currentUserId.toString()) {
             return friendship.sender;
         } else {
             return friendship.receiver;
@@ -23,6 +23,9 @@ export const getAllFriendsService = async (currentUserId) => {
 };
 
 export const deleteFriendService = async (currentUserId, targetUserId) => {
+    if (currentUserId === targetUserId) {
+        throw new AppError("Invalid Token");
+    }
     await Friend.findOneAndDelete({
         $or: [
             { sender: currentUserId, receiver: targetUserId },
@@ -115,7 +118,7 @@ export const acceptRequestService = async (currentUserId, requestId) => {
         throw new AppError("Relationship doesn't exist");
     }
 
-    if (friendRequest.receiver.toString() !== currentUserId.toString()) {
+    if (friendRequest.sender.toString() === currentUserId.toString()) {
         throw new AppError("Invalid request");
     }
 

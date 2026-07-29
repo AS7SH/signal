@@ -5,7 +5,7 @@ import { Message } from "../models/app/message.model.js";
 export const sendMessageService = async (
     currentUserId,
     chatId,
-    { identifier, replyTo },
+    { message, image, replyTo },
 ) => {
     const chat = await Chat.findOne({
         _id: chatId,
@@ -18,12 +18,13 @@ export const sendMessageService = async (
 
     const newMessage = await Message.create({
         chatId,
-        identifier,
         sender: currentUserId,
+        ...(message && { message }),
+        ...(image && { image }),
         ...(replyTo && { replyTo }),
     });
 
-    return newMessage.toObject();
+    return newMessage;
 };
 
 export const editMessageService = async (
@@ -48,7 +49,7 @@ export const editMessageService = async (
         );
     }
 
-    return updatedMessage.toObject();
+    return updatedMessage;
 };
 
 export const deleteMessageService = async (currentUserId, messageId) => {

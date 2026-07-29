@@ -3,11 +3,13 @@ import authRoutes from "./auth.route.js";
 import friendsRouter from "./friends.route.js";
 import chatRouter from "./chat.route.js";
 import messageRouter from "./message.route.js";
+import userRouter from "./user.route.js";
 
 const routes = Router()
     .use("/api/auth", authRoutes)
     .use("/api/friends", friendsRouter)
     .use("/api/chat", chatRouter)
-    .use("/api/message", messageRouter);
+    .use("/api/message", messageRouter)
+    .use("/api/user", userRouter);
 
 export default routes;

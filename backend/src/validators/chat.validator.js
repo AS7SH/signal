@@ -5,7 +5,6 @@ export const createChatSchema = z.object({
 });
 
 export const createGroupSchema = z.object({
-    isGroup: z.boolean().optional(),
     participantIds: z.array(z.string().trim().min(1)).optional(),
     groupName: z.string().trim().min(1).optional(),
 });

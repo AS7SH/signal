@@ -14,14 +14,14 @@ import {
 const chatRouter = Router()
     .use(ProtectRoute)
 
-    .get("/", getUserChatsController)
-    .post("/", createChatController)
-    .get("/:chatId", getSingleChatController)
-    .delete("/:chatId", deleteChatController)
-
     .post("/group", createGroupChatController)
-    .put("/group/:chatId/rename", renameGroupController)
-    .put("/group/:chatId/add", addToGroupController)
-    .put("/group/:chatId/remove", removeFromGroupController);
+    .patch("/group/:chatId/rename", renameGroupController)
+    .patch("/group/:chatId/add", addToGroupController)
+    .patch("/group/:chatId/remove", removeFromGroupController)
+
+    .get("/", getUserChatsController)
+    .post("/:friendId", createChatController)
+    .get("/:chatId", getSingleChatController)
+    .delete("/:chatId", deleteChatController);
 
 export default chatRouter;
