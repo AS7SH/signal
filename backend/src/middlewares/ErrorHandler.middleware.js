@@ -1,21 +1,18 @@
 import z from "zod";
 
 export const errorHandler = (err, req, res, next) => {
-    console.log(`[Error] occured: ${req.path}`, err);
+    console.error(`[Error] occurred: ${req.method} ${req.path}`, err);
 
     if (err instanceof z.ZodError) {
-        const validationIssues = err.issues || err.errors || [];
-        const firstErrorMessage =
-            validationIssues[0]?.message || "Validation failed";
-        console.log(firstErrorMessage);
+        const formattedErrors = err.errors.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+        }));
 
-        return res.status(300).json({
+        return res.status(400).json({
             success: false,
-            message: firstErrorMessage,
-            errors:
-                typeof err.flatten === "function"
-                    ? z.treeifyError(err)
-                    : validationIssues,
+            message: "Validation failed",
+            errors: formattedErrors,
         });
     }
 
@@ -25,7 +22,6 @@ export const errorHandler = (err, req, res, next) => {
 
     return res.status(statusCode).json({
         success: false,
-        message: message,
-        error: err?.message || "Something went wrong",
+        message: message || "Something went wrong",
     });
 };

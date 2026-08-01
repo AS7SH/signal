@@ -24,7 +24,7 @@ export const getAllFriendsService = async (currentUserId) => {
 
 export const deleteFriendService = async (currentUserId, targetUserId) => {
     if (currentUserId === targetUserId) {
-        throw new AppError("Invalid Token");
+        throw new AppError("Invalid Token", 401);
     }
     await Friend.findOneAndDelete({
         $or: [
@@ -58,7 +58,10 @@ export const getOutgoingRequestsService = async (currentUserId) => {
 
 export const sendRequestService = async (currentUserId, targetUserId) => {
     if (currentUserId.toString() === targetUserId.toString()) {
-        throw new AppError("You cannot send a friend request to yourself.");
+        throw new AppError(
+            "You cannot send a friend request to yourself.",
+            400,
+        );
     }
 
     const blockExists = await Block.findOne({
@@ -67,7 +70,7 @@ export const sendRequestService = async (currentUserId, targetUserId) => {
     });
 
     if (blockExists) {
-        throw new AppError("you cannot interact with this person");
+        throw new AppError("you cannot interact with this person", 403);
     }
 
     const existingRelationship = await Friend.findOne({
@@ -79,7 +82,7 @@ export const sendRequestService = async (currentUserId, targetUserId) => {
 
     if (existingRelationship) {
         if (existingRelationship.status === "accepted") {
-            throw new AppError("You are already friends.");
+            throw new AppError("You are already friends.", 400);
         }
 
         if (existingRelationship.status === "pending") {
@@ -97,7 +100,7 @@ export const sendRequestService = async (currentUserId, targetUserId) => {
                 existingRelationship.sender.toString() ===
                 currentUserId.toString()
             ) {
-                throw new AppError("Friend request already sent.");
+                throw new AppError("Friend request already sent.", 400);
             }
         }
     }
@@ -115,15 +118,15 @@ export const acceptRequestService = async (currentUserId, requestId) => {
     const friendRequest = await Friend.findById(requestId);
 
     if (!friendRequest) {
-        throw new AppError("Relationship doesn't exist");
+        throw new AppError("Relationship doesn't exist", 404);
     }
 
     if (friendRequest.sender.toString() === currentUserId.toString()) {
-        throw new AppError("Invalid request");
+        throw new AppError("Invalid request", 400);
     }
 
     if (friendRequest.status === "accepted") {
-        throw new AppError("You are already friends.");
+        throw new AppError("You are already friends.", 400);
     }
 
     friendRequest.status = "accepted";
@@ -137,11 +140,11 @@ export const rejectRequestService = async (currentUserId, requestId) => {
     const friendRequest = await Friend.findById(requestId);
 
     if (!friendRequest) {
-        throw new AppError("Relationship doesnt exist");
+        throw new AppError("Relationship doesnt exist", 404);
     }
 
     if (friendRequest.receiver.toString() !== currentUserId.toString()) {
-        throw new AppError("Invalid request");
+        throw new AppError("Invalid request", 400);
     }
 
     await Friend.deleteOne({ _id: requestId });
@@ -151,15 +154,15 @@ export const cancelRequestService = async (currentUserId, requestId) => {
     const friendRequest = await Friend.findById(requestId);
 
     if (!friendRequest) {
-        throw new AppError("Relationship doesnt exist");
+        throw new AppError("Relationship doesnt exist", 404);
     }
 
     if (friendRequest.sender.toString() !== currentUserId.toString()) {
-        throw new AppError("Invalid request");
+        throw new AppError("Invalid request", 400);
     }
 
     if (friendRequest.status === "accepted") {
-        throw new AppError("your request has already accepted");
+        throw new AppError("your request has already accepted", 400);
     }
 
     await Friend.deleteOne({ _id: requestId });
@@ -180,7 +183,7 @@ export const blockUserService = async (currentUserId, targetUserId) => {
     });
 
     if (isBlocked) {
-        throw new AppError("The user already Blocked");
+        throw new AppError("The user already Blocked", 400);
     }
 
     const blockUser = await Block.create({
@@ -205,7 +208,7 @@ export const unblockUserService = async (currentUserId, targetUserId) => {
     });
 
     if (!isBlocked) {
-        throw new AppError("You haven't blocked this user before");
+        throw new AppError("You haven't blocked this user before", 404);
     }
 
     await Block.deleteOne({

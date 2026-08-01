@@ -20,7 +20,7 @@ export const getUserService = async (username) => {
     }).select("username name avatar about");
 
     if (!user) {
-        throw new AppError("User not found");
+        throw new AppError("User not found", 404);
     }
 
     return user;
@@ -45,7 +45,7 @@ export const deleteUserService = async (_id) => {
     const user = await User.findByIdAndDelete(_id);
 
     if (!user) {
-        throw new AppError("User not found");
+        throw new AppError("User not found", 404);
     }
 
     return;

@@ -25,7 +25,7 @@ export const getUserChatsService = async (currentUserId) => {
 
 export const createChatService = async (currentUserId, participantId) => {
     const existingOtherUser = await User.findById(participantId);
-    if (!existingOtherUser) throw new AppError("the user doesnt exist");
+    if (!existingOtherUser) throw new AppError("the user doesnt exist", 404);
 
     const existingRelationship = await Friend.findOne({
         $or: [
@@ -35,7 +35,7 @@ export const createChatService = async (currentUserId, participantId) => {
     });
 
     if (!existingRelationship) {
-        throw new AppError("You are not friend with this person");
+        throw new AppError("You are not friend with this person", 400);
     }
 
     const existingChat = await Chat.findOne({
@@ -66,7 +66,7 @@ export const getSingleChatService = async (currentUserId, chatId) => {
     }).populate("participants", "name avatar");
 
     if (!chat) {
-        throw new AppError("Couldn't find the chat");
+        throw new AppError("Couldn't find the chat", 404);
     }
 
     const messages = await Message.find({
@@ -97,7 +97,7 @@ export const deleteChatService = async (currentUserId, chatId) => {
     });
 
     if (!chat) {
-        throw new AppError("couldn't find the chat");
+        throw new AppError("couldn't find the chat", 404);
     }
 
     if (chat.isGroup) {
@@ -105,7 +105,10 @@ export const deleteChatService = async (currentUserId, chatId) => {
             chat.createdBy.toString() === currentUserId.toString();
 
         if (!isCreator) {
-            throw new AppError("You've got no previlage to delete the group");
+            throw new AppError(
+                "You've got no previlage to delete the group",
+                403,
+            );
         }
     }
 
@@ -118,7 +121,7 @@ export const createGroupChatService = async (currentUserId, body) => {
     let allParticipantsIds = [];
 
     if (participantIds?.length <= 1) {
-        throw new AppError("No. of. participants must be atleast 2");
+        throw new AppError("No. of. participants must be atleast 2", 400);
     }
 
     allParticipantsIds = [currentUserId, ...participantIds];
@@ -142,11 +145,11 @@ export const renameGroupService = async (currentUserId, chatId, groupName) => {
     });
 
     if (!chat) {
-        throw new AppError("couldn't find the chat");
+        throw new AppError("couldn't find the chat", 404);
     }
 
     if (!chat.groupAdmins.includes(currentUserId)) {
-        throw new AppError("Only Admins can change");
+        throw new AppError("Only Admins can change", 403);
     }
 
     chat.groupName = groupName;
@@ -162,7 +165,7 @@ export const addToGroupService = async (
 ) => {
     const targetUser = await User.findById(targetUserId);
     if (!targetUser) {
-        throw new AppError("user doesn't exists");
+        throw new AppError("user doesn't exists", 404);
     }
 
     const chat = await Chat.findOne({
@@ -170,19 +173,19 @@ export const addToGroupService = async (
         participants: currentUserId,
     });
     if (!chat) {
-        throw new AppError("couldn't find the chat");
+        throw new AppError("couldn't find the chat", 404);
     }
 
     if (!chat.isGroup) {
-        throw new AppError("This is not a group chat");
+        throw new AppError("This is not a group chat", 400);
     }
 
     if (!chat.groupAdmins.includes(currentUserId)) {
-        throw new AppError("You are not group admin");
+        throw new AppError("You are not group admin", 403);
     }
 
     if (chat.participants.includes(targetUserId)) {
-        throw new AppError("user is already in the group");
+        throw new AppError("user is already in the group", 400);
     }
 
     const updatedChat = await Chat.findByIdAndUpdate(
@@ -205,7 +208,7 @@ export const removeFromGroupService = async (
 ) => {
     const targetUser = await User.findById(targetUserId);
     if (!targetUser) {
-        throw new AppError("user doesn't exists");
+        throw new AppError("user doesn't exists", 404);
     }
 
     const chat = await Chat.findOne({
@@ -213,26 +216,26 @@ export const removeFromGroupService = async (
         participants: currentUserId,
     });
     if (!chat) {
-        throw new AppError("couldn't find the chat");
+        throw new AppError("couldn't find the chat", 404);
     }
 
     if (!chat.isGroup) {
-        throw new AppError("This is not a group chat");
+        throw new AppError("This is not a group chat", 400);
     }
 
     if (!chat.groupAdmins.includes(currentUserId)) {
-        throw new AppError("You are not group admin");
+        throw new AppError("You are not group admin", 403);
     }
 
     if (
         chat.groupAdmins.includes(targetUserId) &&
         chat.groupAdmins.length === 1
     ) {
-        throw new AppError("Cannot remove the last group admin");
+        throw new AppError("Cannot remove the last group admin", 400);
     }
 
     if (!chat.participants.includes(targetUserId)) {
-        throw new AppError("user is not in the group");
+        throw new AppError("user is not in the group", 404);
     }
 
     const updatedChat = await Chat.findByIdAndUpdate(

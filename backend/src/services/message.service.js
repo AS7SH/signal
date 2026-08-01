@@ -13,7 +13,7 @@ export const sendMessageService = async (
     });
 
     if (!chat) {
-        throw new AppError("Chat doesn't exist");
+        throw new AppError("Chat doesn't exist", 404);
     }
 
     const newMessage = await Message.create({
@@ -46,6 +46,7 @@ export const editMessageService = async (
     if (!updatedMessage) {
         throw new AppError(
             "Message not found or you don't have permission to edit it",
+            404,
         );
     }
 
@@ -61,6 +62,7 @@ export const deleteMessageService = async (currentUserId, messageId) => {
     if (!message) {
         throw new AppError(
             "Message not found or you don't have permission to edit it",
+            404,
         );
     }
 

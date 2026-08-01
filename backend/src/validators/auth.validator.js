@@ -22,7 +22,7 @@ const passwordSchema = z
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+=])[A-Za-z\d@$!%*?&#^()_\-+=]{8,64}$/,
         "Invalid Password",
     );
-const otpSchema = z.string().min(6);
+const otpSchema = z.string().length(6);
 
 export const signupValidator = z.object({
     username: usernameSchema,

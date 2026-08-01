@@ -15,10 +15,10 @@ export const signupService = async (body) => {
     const { username, name, email, password } = body;
 
     const isEmailExists = await User.findOne({ email });
-    if (isEmailExists) throw new AppError("Email already Exists");
+    if (isEmailExists) throw new AppError("Email already Exists", 409);
 
     const isUserNameExists = await User.findOne({ username });
-    if (isUserNameExists) throw new AppError("Username already Exists");
+    if (isUserNameExists) throw new AppError("Username already Exists", 409);
 
     const hashPass = await bcrypt.hash(password, 10);
     const verificationToken = getOTP();
@@ -48,13 +48,13 @@ export const verifyEmailService = async (body, reqUser) => {
 
     if (!user) throw new AppError("User not found", 404);
 
-    if (user.verificationToken !== otp) throw new AppError("Invalid OTP");
+    if (user.verificationToken !== otp) throw new AppError("Invalid OTP", 400);
 
     if (
         !user.verificationTokenExpiresAt ||
         Date.now() > user.verificationTokenExpiresAt
     ) {
-        throw new AppError("OTP Expired, click resend");
+        throw new AppError("OTP Expired, click resend", 400);
     }
 
     user.isVerified = true;
@@ -89,11 +89,11 @@ export const loginService = async (body) => {
         [identifiedItem]: identifier,
     }).select("+password");
 
-    if (!user) throw new AppError("Invalid email/username or password");
+    if (!user) throw new AppError("Invalid email/username or password", 401);
 
     const isPasswordSame = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordSame) throw new AppError("email / password is wrong");
+    if (!isPasswordSame) throw new AppError("email / password is wrong", 401);
 
     user.lastLogin = Date.now();
     user.refreshToken = generateRefreshToken(user._id);
