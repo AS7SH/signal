@@ -5,6 +5,7 @@ import {
 } from "../lib/cookies.js";
 import { asyncHandler } from "../middlewares/AsyncHandler.middleware.js";
 import {
+    checkUsernameService,
     deleteAccountService,
     loginService,
     logoutService,
@@ -20,6 +21,13 @@ import {
 } from "../validators/auth.validator.js";
 import { ENV } from "../config/env.config.js";
 import { AppError } from "../lib/AppError.js";
+
+export const checkUsernameController = asyncHandler(async (req, res) => {
+    const { username } = req.params;
+    const response = await checkUsernameService(username);
+
+    return sendResponse(res, true, 200, "", response);
+});
 
 export const signupController = asyncHandler(async (req, res) => {
     const body = signupValidator.parse(req.body);

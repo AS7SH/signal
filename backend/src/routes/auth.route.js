@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    checkUsernameController,
     deleteAccountController,
     loginController,
     logoutController,
@@ -11,6 +12,7 @@ import {
 import { ProtectRoute } from "../middlewares/ProtectRoute.middleware.js";
 
 const authRoutes = Router()
+    .get("/:username/check", checkUsernameController)
     .post("/signup", signupController)
     .post("/refresh", refreshTokenController)
     .post("/login", loginController)

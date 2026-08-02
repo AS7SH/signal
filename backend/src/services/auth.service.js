@@ -11,6 +11,18 @@ const userToObj = (user) => {
     return user._doc;
 };
 
+export const checkUsernameService = async (username) => {
+    const user = await User.find({
+        username,
+    });
+
+    if (user) {
+        return "user found";
+    }
+
+    return "user not found";
+};
+
 export const signupService = async (body) => {
     const { username, name, email, password } = body;
 
