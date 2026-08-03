@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { AppError } from "../lib/AppError.js";
 import { asyncHandler } from "./AsyncHandler.middleware.js";
 import { ENV } from "../config/env.config.js";
+import { clearRefreshTokenCookie } from "../lib/cookies.js";
 
 export const ProtectRoute = asyncHandler(async (req, res, next) => {
     let token;
@@ -14,6 +15,7 @@ export const ProtectRoute = asyncHandler(async (req, res, next) => {
     }
 
     if (!token) {
+        clearRefreshTokenCookie(res);
         throw new AppError("Unauthorized", 401);
     }
 
@@ -28,6 +30,7 @@ export const ProtectRoute = asyncHandler(async (req, res, next) => {
         if (error.name === "TokenExpiredError") {
             throw new AppError("AccessTokenExpired", 401);
         }
+        clearRefreshTokenCookie(res);
         throw new AppError("Unauthorized", 401);
     }
 });

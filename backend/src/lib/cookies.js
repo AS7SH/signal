@@ -5,7 +5,7 @@ const getRefreshTokenCookieOptions = () => ({
     httpOnly: true,
     secure: ENV.NODE_ENV === "production",
     sameSite: ENV.NODE_ENV === "production" ? "strict" : "lax",
-    path: "/api/auth/refresh",
+    path: "/",
 });
 
 export const generateRefreshToken = (_id) => {

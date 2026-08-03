@@ -12,15 +12,15 @@ const userToObj = (user) => {
 };
 
 export const checkUsernameService = async (username) => {
-    const user = await User.find({
+    const user = await User.findOne({
         username,
     });
 
-    if (user) {
-        return "user found";
+    if (!user) {
+        return "user not found";
     }
 
-    return "user not found";
+    return "user found";
 };
 
 export const signupService = async (body) => {
@@ -149,6 +149,8 @@ export const refreshService = async (refreshToken) => {
 
     const accessToken = generateAccessToken(user._id);
     const userData = userToObj(user);
+
+    console.log(accessToken);
 
     return { user: userData, accessToken };
 };

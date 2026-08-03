@@ -26,7 +26,7 @@ export const checkUsernameController = asyncHandler(async (req, res) => {
     const { username } = req.params;
     const response = await checkUsernameService(username);
 
-    return sendResponse(res, true, 200, "", response);
+    return sendResponse(res, true, 200, response);
 });
 
 export const signupController = asyncHandler(async (req, res) => {
