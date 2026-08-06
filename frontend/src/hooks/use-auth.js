@@ -9,6 +9,8 @@ export const useAuth = create((set, get) => ({
 
     isUsernameAvailable: null,
 
+    isCheckingAuth: true,
+
     checkUsernameLoading: false,
     signupLoading: false,
     loginLoading: false,
@@ -152,7 +154,7 @@ export const useAuth = create((set, get) => ({
             set({
                 user: null,
                 accessToken: null,
-                username: null,
+                username: "",
             });
         } catch (error) {
             const { message } = getErrData(error);
@@ -167,12 +169,21 @@ export const useAuth = create((set, get) => ({
     },
 
     refresh: async () => {
+        set({ isCheckingAuth: true });
+        const minimumDelay = new Promise((resolve) =>
+            setTimeout(resolve, 2000),
+        );
         try {
-            const res = await API.post("/auth/refresh");
+            const [res] = await Promise.all([
+                API.post("/auth/refresh"),
+                minimumDelay,
+            ]);
             const { data } = getResData(res);
             set({ accessToken: data?.accessToken, user: data.user });
         } catch (error) {
             set({ accessToken: null, user: null });
+        } finally {
+            set({ isCheckingAuth: false });
         }
     },
 }));

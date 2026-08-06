@@ -84,7 +84,7 @@ const Login = () => {
                         </Button>
                         <div>
                             <span>Don't have an Account ?</span>{" "}
-                            <Link to="/auth/verify" className="underline">
+                            <Link to="/auth/signup" className="underline">
                                 Sign Up
                             </Link>
                         </div>

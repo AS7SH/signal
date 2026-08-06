@@ -38,7 +38,7 @@ const Navbar = () => {
                         </TooltipContent>
                     </Tooltip>
                 </div>
-                {user?.isVerified !== false ? (
+                {user !== null ? (
                     <>
                         <Separator orientation="vertical" />
                         <div>

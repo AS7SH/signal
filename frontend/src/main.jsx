@@ -21,7 +21,7 @@ const Root = () => {
             14 * 60 * 1000,
         );
 
-        return () => setInterval(intervalId);
+        return () => clearInterval(intervalId);
     }, [refresh]);
     return <RouterProvider router={router} />;
 };
