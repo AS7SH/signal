@@ -2,6 +2,7 @@ import { sendResponse } from "../lib/sendResponse.js";
 import { asyncHandler } from "../middlewares/AsyncHandler.middleware.js";
 import {
     addToGroupService,
+    archiveChatService,
     createChatService,
     createGroupChatService,
     deleteChatService,
@@ -9,6 +10,7 @@ import {
     getUserChatsService,
     removeFromGroupService,
     renameGroupService,
+    unArchiveChatService,
 } from "../services/chat.service.js";
 import {
     createChatSchema,
@@ -90,6 +92,34 @@ export const removeFromGroupController = asyncHandler(async (req, res) => {
         true,
         200,
         "successfully added the user to group",
+        response,
+    );
+});
+
+export const archiveChatController = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { chatId } = req.params;
+
+    const response = await archiveChatService(_id, chatId);
+    return sendResponse(
+        res,
+        true,
+        200,
+        "successfully archived the chat",
+        response,
+    );
+});
+
+export const unArchiveChatController = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { chatId } = req.params;
+
+    const response = await unArchiveChatService(_id, chatId);
+    return sendResponse(
+        res,
+        true,
+        200,
+        "successfully unarchived the chat",
         response,
     );
 });

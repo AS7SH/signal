@@ -24,6 +24,10 @@ export const sendMessageService = async (
         ...(replyTo && { replyTo }),
     });
 
+    await Chat.findByIdAndUpdate(chatId, {
+        lastMessage: newMessage._id,
+    });
+
     return newMessage;
 };
 

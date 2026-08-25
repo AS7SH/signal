@@ -21,7 +21,7 @@ export const HTML_OTP_Email = (username, heading, duration, title) => {
 <body>
   <div class="container">
     <div class="header">
-      <h1>WeChat</h1>
+      <h1>Signal</h1>
     </div>
 
     <div class="content">

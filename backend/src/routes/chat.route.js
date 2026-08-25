@@ -2,6 +2,7 @@ import { Router } from "express";
 import { ProtectRoute } from "../middlewares/ProtectRoute.middleware.js";
 import {
     addToGroupController,
+    archiveChatController,
     createChatController,
     createGroupChatController,
     deleteChatController,
@@ -9,10 +10,14 @@ import {
     getUserChatsController,
     removeFromGroupController,
     renameGroupController,
+    unArchiveChatController,
 } from "../controllers/chat.controller.js";
 
 const chatRouter = Router()
     .use(ProtectRoute)
+
+    .post("/:chatId/archive", archiveChatController)
+    .post("/:chatId/un-archive", unArchiveChatController)
 
     .post("/group", createGroupChatController)
     .patch("/group/:chatId/rename", renameGroupController)

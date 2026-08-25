@@ -5,6 +5,12 @@ import { Message } from "../models/app/message.model.js";
 import { AppError } from "../lib/AppError.js";
 
 export const getUserChatsService = async (currentUserId) => {
+    const user = await User.findById(currentUserId);
+    if (!user) throw new AppError("the user doesnt exist", 404);
+
+    let { archivedChatsIds } = user;
+    archivedChatsIds = new Set(archivedChatsIds);
+
     const chats = await Chat.find({
         participants: {
             $in: [currentUserId],
@@ -12,7 +18,7 @@ export const getUserChatsService = async (currentUserId) => {
     })
         .populate("participants", "name avatar")
         .populate({
-            path: "message",
+            path: "lastMessage",
             populate: {
                 path: "sender",
                 select: "name avatar",
@@ -20,7 +26,12 @@ export const getUserChatsService = async (currentUserId) => {
         })
         .sort({ updatedAt: -1 });
 
-    return chats;
+    const normalChats = chats.filter((chat) => !archivedChatsIds.has(chat._id));
+    const archivedChats = chats.filter((chat) =>
+        archivedChatsIds.has(chat._id),
+    );
+
+    return { normalChats, archivedChats };
 };
 
 export const createChatService = async (currentUserId, participantId) => {
@@ -250,4 +261,28 @@ export const removeFromGroupService = async (
     );
 
     return updatedChat;
+};
+
+export const archiveChatService = async (currentUserId, chatId) => {
+    const user = await User.findById(currentUserId);
+    if (!user) throw new AppError("the user doesnt exist", 404);
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) throw new AppError("the chat doesnt exist", 404);
+
+    user.archivedChatsIds.addToSet(chatId);
+    await user.save();
+    return user;
+};
+
+export const unArchiveChatService = async (currentUserId, chatId) => {
+    const user = await User.findById(currentUserId);
+    if (!user) throw new AppError("the user doesnt exist", 404);
+
+    const chat = await Chat.findById(chatId);
+    if (!chat) throw new AppError("the chat doesnt exist", 404);
+
+    user.archivedChatsIds.pull(chatId);
+    await user.save();
+    return user;
 };

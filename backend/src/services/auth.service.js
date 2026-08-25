@@ -150,8 +150,6 @@ export const refreshService = async (refreshToken) => {
     const accessToken = generateAccessToken(user._id);
     const userData = userToObj(user);
 
-    console.log(accessToken);
-
     return { user: userData, accessToken };
 };
 

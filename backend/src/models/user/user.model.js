@@ -30,6 +30,12 @@ const UserSchema = new mongoose.Schema(
             default: "/avatars/default.png",
             trim: true,
         },
+        archivedChatsIds: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Chat",
+            },
+        ],
         password: {
             type: String,
             required: true,
