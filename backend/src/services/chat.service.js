@@ -9,7 +9,9 @@ export const getUserChatsService = async (currentUserId) => {
     if (!user) throw new AppError("the user doesnt exist", 404);
 
     let { archivedChatsIds } = user;
-    archivedChatsIds = new Set(archivedChatsIds);
+    archivedChatsIds = new Set(
+        user.archivedChatsIds.map((id) => id.toString()),
+    );
 
     const chats = await Chat.find({
         participants: {
@@ -26,12 +28,14 @@ export const getUserChatsService = async (currentUserId) => {
         })
         .sort({ updatedAt: -1 });
 
-    const normalChats = chats.filter((chat) => !archivedChatsIds.has(chat._id));
-    const archivedChats = chats.filter((chat) =>
-        archivedChatsIds.has(chat._id),
+    const normalChats = chats.filter(
+        (chat) => !archivedChatsIds.has(chat._id.toString()),
+    );
+    const archiveChats = chats.filter((chat) =>
+        archivedChatsIds.has(chat._id.toString()),
     );
 
-    return { normalChats, archivedChats };
+    return { normalChats, archiveChats };
 };
 
 export const createChatService = async (currentUserId, participantId) => {
