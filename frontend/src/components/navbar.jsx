@@ -18,25 +18,11 @@ const Navbar = () => {
             </div>
             <div className="flex items-center gap-5">
                 <div>
-                    <Tooltip>
-                        <TooltipTrigger render={<span />}>
-                            <GithubRepoTrigger />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>View Github Repo</p>
-                        </TooltipContent>
-                    </Tooltip>
+                    <GithubRepoTrigger orientation="down" />
                 </div>
                 <Separator orientation="vertical" />
                 <div>
-                    <Tooltip>
-                        <TooltipTrigger render={<span />}>
-                            <ThemeTrigger />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Toggle Theme</p>
-                        </TooltipContent>
-                    </Tooltip>
+                    <ThemeTrigger orientation="down" />
                 </div>
                 {user !== null ? (
                     <>

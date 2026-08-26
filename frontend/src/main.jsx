@@ -11,6 +11,10 @@ import { useAuth } from "./hooks/use-auth";
 const Root = () => {
     const refresh = useAuth((state) => state.refresh);
 
+    window.addEventListener("online", () => {
+        window.location.reload();
+    });
+
     useEffect(() => {
         refresh();
 
