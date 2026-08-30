@@ -10,6 +10,7 @@ import {
     getIncomingRequestsService,
     getOutgoingRequestsService,
     rejectRequestService,
+    searchUsersService,
     sendRequestService,
     unblockUserService,
 } from "../services/friends.service.js";
@@ -120,4 +121,17 @@ export const unblockUserController = asyncHandler(async (req, res) => {
     const response = await unblockUserService(_id, friendId);
 
     return sendResponse(res, true, 200, "unblocked the user", response);
+});
+
+export const searchUsersController = asyncHandler(async (req, res) => {
+    const { query } = req.params;
+    const { _id } = req.user;
+    const response = await searchUsersService(query, _id);
+    return sendResponse(
+        res,
+        true,
+        200,
+        "retrieved users successfully",
+        response,
+    );
 });

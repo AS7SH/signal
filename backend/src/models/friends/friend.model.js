@@ -24,4 +24,7 @@ const friendSchema = new mongoose.Schema(
     { timestamps: true },
 );
 
+friendSchema.index({ sender: 1, receiver: 1 });
+friendSchema.index({ status: 1 });
+
 export const Friend = mongoose.model("Friend", friendSchema);

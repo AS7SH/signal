@@ -9,6 +9,7 @@ import {
     getIncomingRequestsController,
     getOutgoingRequestsController,
     rejectRequestController,
+    searchUsersController,
     sendRequestController,
     unblockUserController,
 } from "../controllers/friends.controller.js";
@@ -30,8 +31,10 @@ const friendsRouter = Router()
 
     .delete("/requests/:requestId", cancelRequestController)
 
+    .get("/search/:query", searchUsersController)
+
     .get("/blocked", getBlockedUsersController)
     .post("/block/:friendId", blockUserController)
-    .delete("/block/:friendId", unblockUserController);
+    .delete("/unblock/:friendId", unblockUserController);
 
 export default friendsRouter;

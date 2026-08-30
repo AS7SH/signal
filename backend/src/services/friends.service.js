@@ -1,8 +1,19 @@
+import { User } from "../models/user/user.model.js";
 import { AppError } from "../lib/AppError.js";
 import { Block } from "../models/friends/block.model.js";
 import { Friend } from "../models/friends/friend.model.js";
 
 export const getAllFriendsService = async (currentUserId) => {
+    const blockRecords = await Block.find({
+        $or: [{ user: currentUserId }, { blocked: currentUserId }],
+    });
+
+    const blockedUserIds = blockRecords.map((b) =>
+        b.user.toString() === currentUserId.toString()
+            ? b.blocked.toString()
+            : b.user.toString(),
+    );
+
     const friendships = await Friend.find({
         status: "accepted",
         $or: [{ sender: currentUserId }, { receiver: currentUserId }],
@@ -11,13 +22,17 @@ export const getAllFriendsService = async (currentUserId) => {
         .populate("receiver", "username name about avatar")
         .sort({ acceptedAt: -1 });
 
-    const friends = friendships.map((friendship) => {
-        if (friendship.receiver._id.toString() == currentUserId.toString()) {
-            return friendship.sender;
-        } else {
-            return friendship.receiver;
-        }
-    });
+    const friends = friendships
+        .map((friendship) => {
+            if (
+                friendship.receiver._id.toString() == currentUserId.toString()
+            ) {
+                return friendship.sender;
+            } else {
+                return friendship.receiver;
+            }
+        })
+        .filter((friend) => !blockedUserIds.includes(friend._id.toString()));
 
     return friends;
 };
@@ -111,11 +126,16 @@ export const sendRequestService = async (currentUserId, targetUserId) => {
         status: "pending",
     });
 
+    await newRelationship.populate("receiver", "name avatar username about");
+
     return newRelationship.toObject();
 };
 
 export const acceptRequestService = async (currentUserId, requestId) => {
-    const friendRequest = await Friend.findById(requestId);
+    const friendRequest = await Friend.findById(requestId).populate(
+        "sender",
+        "name avatar username about",
+    );
 
     if (!friendRequest) {
         throw new AppError("Relationship doesn't exist", 404);
@@ -177,32 +197,23 @@ export const getBlockedUsersService = async (currentUserId) => {
 };
 
 export const blockUserService = async (currentUserId, targetUserId) => {
-    const isBlocked = await Block.findOne({
-        user: currentUserId,
-        blocked: targetUserId,
-    });
+    try {
+        const blockUser = await Block.create({
+            user: currentUserId,
+            blocked: targetUserId,
+        });
 
-    if (isBlocked) {
-        throw new AppError("The user already Blocked", 400);
+        return blockUser.toObject();
+    } catch (error) {
+        if (error.code === 11000) {
+            throw new AppError("This user is already blocked.", 400);
+        }
+        throw error;
     }
-
-    const blockUser = await Block.create({
-        user: currentUserId,
-        blocked: targetUserId,
-    });
-
-    await Friend.deleteOne({
-        $or: [
-            { sender: currentUserId, receiver: targetUserId },
-            { sender: targetUserId, receiver: currentUserId },
-        ],
-    });
-
-    return blockUser.toObject();
 };
 
 export const unblockUserService = async (currentUserId, targetUserId) => {
-    const isBlocked = await Block.findOne({
+    const isBlocked = await Block.findOneAndDelete({
         user: currentUserId,
         blocked: targetUserId,
     });
@@ -210,9 +221,18 @@ export const unblockUserService = async (currentUserId, targetUserId) => {
     if (!isBlocked) {
         throw new AppError("You haven't blocked this user before", 404);
     }
+};
 
-    await Block.deleteOne({
-        user: currentUserId,
-        blocked: targetUserId,
-    });
+export const searchUsersService = async (query, currentUserId) => {
+    const users = await User.find({
+        _id: { $ne: currentUserId },
+        $or: [
+            { username: { $regex: `${query}`, $options: "i" } },
+            { name: { $regex: `${query}`, $options: "i" } },
+        ],
+    })
+        .limit(10)
+        .select("username name avatar about");
+
+    return users;
 };

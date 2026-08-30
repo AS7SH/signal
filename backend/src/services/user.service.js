@@ -1,19 +1,6 @@
 import { AppError } from "../lib/AppError.js";
 import { User } from "../models/user/user.model.js";
 
-export const searchUsersService = async (query) => {
-    const users = await User.find({
-        $or: [
-            { username: { $regex: `${query}`, $options: "i" } },
-            { name: { $regex: `${query}`, $options: "i" } },
-        ],
-    })
-        .limit(2)
-        .select("username name avatar about");
-
-    return users;
-};
-
 export const getUserService = async (username) => {
     const user = await User.find({
         username,

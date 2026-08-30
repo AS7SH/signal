@@ -50,6 +50,7 @@ export const deleteChatController = asyncHandler(async (req, res) => {
 });
 
 export const createGroupChatController = asyncHandler(async (req, res) => {
+    console.log(req.body);
     const { _id } = req.user;
     const body = createGroupSchema.parse(req.body);
 

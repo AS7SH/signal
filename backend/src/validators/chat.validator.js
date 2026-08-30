@@ -5,8 +5,8 @@ export const createChatSchema = z.object({
 });
 
 export const createGroupSchema = z.object({
-    participantIds: z.array(z.string().trim().min(1)).optional(),
-    groupName: z.string().trim().min(1).optional(),
+    participantIds: z.array(z.string().trim().min(1)),
+    groupName: z.string().trim().min(1),
 });
 
 export const chatIdSchema = z.object({

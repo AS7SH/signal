@@ -69,6 +69,8 @@ export const createChatService = async (currentUserId, participantId) => {
         createdBy: currentUserId,
     });
 
+    await chat.populate("participants", "name avatar");
+
     return chat;
 };
 
@@ -135,8 +137,8 @@ export const createGroupChatService = async (currentUserId, body) => {
     let chat;
     let allParticipantsIds = [];
 
-    if (participantIds?.length <= 1) {
-        throw new AppError("No. of. participants must be atleast 2", 400);
+    if (participantIds?.length < 1) {
+        throw new AppError("No. of. participants must be atleast 1", 400);
     }
 
     allParticipantsIds = [currentUserId, ...participantIds];
@@ -148,6 +150,8 @@ export const createGroupChatService = async (currentUserId, body) => {
         groupAdmins: [currentUserId],
         createdBy: currentUserId,
     });
+
+    await chat.populate("participants", "name avatar");
 
     return chat;
 };

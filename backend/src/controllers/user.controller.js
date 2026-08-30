@@ -1,24 +1,11 @@
 import {
     deleteUserService,
     getUserService,
-    searchUsersService,
     updateUserService,
 } from "../services/user.service.js";
 import { asyncHandler } from "../middlewares/AsyncHandler.middleware.js";
 import { sendResponse } from "../lib/sendResponse.js";
 import { updateUserValidator } from "../validators/user.validator.js";
-
-export const searchUsersController = asyncHandler(async (req, res) => {
-    const { query } = req.params;
-    const response = await searchUsersService(query);
-    return sendResponse(
-        res,
-        true,
-        200,
-        "retrieved users successfully",
-        response,
-    );
-});
 
 export const getUserController = asyncHandler(async (req, res) => {
     const { username } = req.params;
