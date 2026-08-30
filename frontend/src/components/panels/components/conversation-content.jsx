@@ -44,7 +44,7 @@ const ConversationContent = () => {
         <div className="flex flex-col h-full w-full p-4">
             {messages.length === 0 ? (
                 <div className="flex flex-1 justify-center items-center">
-                    <Marker variant="separator" className="w-2xl">
+                    <Marker className="flex justify-center shimmer">
                         <MarkerContent>Start a Conversation</MarkerContent>
                     </Marker>
                 </div>

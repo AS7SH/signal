@@ -22,16 +22,16 @@ export const router = createBrowserRouter(
                 <Route element={<ProtectGuard />}>
                     <Route path="/" element={<AppLayout />} />
                 </Route>
-            </Route>
 
-            <Route path="auth" element={<AuthLayout />}>
-                <Route element={<PublicGuard />}>
-                    <Route path="signup" element={<Signup />} />
-                    <Route path="login" element={<Login />} />
-                </Route>
+                <Route path="auth" element={<AuthLayout />}>
+                    <Route element={<PublicGuard />}>
+                        <Route path="signup" element={<Signup />} />
+                        <Route path="login" element={<Login />} />
+                    </Route>
 
-                <Route element={<VerifyGuard />}>
-                    <Route path="verify" element={<Verify />} />
+                    <Route element={<VerifyGuard />}>
+                        <Route path="verify" element={<Verify />} />
+                    </Route>
                 </Route>
             </Route>
         </Route>,

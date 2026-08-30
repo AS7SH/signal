@@ -1,3 +1,4 @@
+import LoginButton from "@/components/login-button";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -28,6 +29,12 @@ const Login = () => {
         login({ identifier, password });
     };
 
+    const handleEnterKey = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit(e);
+        }
+    };
+
     return (
         <div className="w-full">
             <Card>
@@ -38,7 +45,7 @@ const Login = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onKeyDown={handleEnterKey}>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="identifier">
@@ -63,7 +70,7 @@ const Login = () => {
                                     onChange={(e) =>
                                         setPassword(e.target.value)
                                     }
-                                    placeholder="******"
+                                    placeholder="●●●●●●●●●"
                                 />
                             </div>
                         </div>
@@ -89,6 +96,9 @@ const Login = () => {
                             </Link>
                         </div>
                     </div>
+                </CardFooter>
+                <CardFooter className="flex justify-center items-center w-full">
+                    <LoginButton />
                 </CardFooter>
             </Card>
         </div>

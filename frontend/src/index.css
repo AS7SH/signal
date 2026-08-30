@@ -161,3 +161,8 @@
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
 }
+
+body {
+    -webkit-user-select: none;
+    user-select: none;
+}

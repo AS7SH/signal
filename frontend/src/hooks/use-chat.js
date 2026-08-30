@@ -5,26 +5,38 @@ import { useApp } from "./use-app";
 
 export const useChat = create((set, get) => ({
     activeChatId: null,
-
     archiveChatsIds: [],
     normalChatsList: null || [],
     archiveChatsList: null || [],
     chats: new Map(),
-
-    createWhich: "singleChat",
-
+    participantsToCreateGroup: new Set([]),
+    createWhich: "directChat",
     conversation: null || {},
 
     conversationLoading: false,
     chatsListLoading: false,
-    archiveChatLoading: false,
-    unarchiveChatLoading: false,
-    deleteChatLoading: false,
+
+    archiveChatLoadingId: false,
+    unarchiveChatLoadingId: false,
+    deleteChatLoadingId: false,
+
     createSingleChatLoading: false,
+    createGroupChatLoading: false,
 
     setCreateWhich: (which) => set({ createWhich: which }),
 
     closeChat: () => set({ activeChatId: null, conversation: null }),
+
+    toggleGroupParticipant: (userId) =>
+        set((state) => {
+            const newParticipants = new Set(state.participantsToCreateGroup);
+            if (newParticipants.has(userId)) {
+                newParticipants.delete(userId);
+            } else {
+                newParticipants.add(userId);
+            }
+            return { participantsToCreateGroup: newParticipants };
+        }),
 
     getUserChats: async () => {
         set({ chatsListLoading: true });
@@ -91,6 +103,9 @@ export const useChat = create((set, get) => ({
                 };
             });
 
+            console.log("createSingleChat");
+            console.log(data);
+
             useApp.getState().setActiveSidePanel("chatsPanel");
         } catch (error) {
             const { message } = getErrData(error);
@@ -105,7 +120,7 @@ export const useChat = create((set, get) => ({
     },
 
     deleteChat: async (chatId) => {
-        set({ deleteChatLoading: true });
+        set({ deleteChatLoadingId: chatId });
         try {
             await API.delete(`/chat/${chatId}`);
             set((state) => {
@@ -136,12 +151,42 @@ export const useChat = create((set, get) => ({
                 priority: "high",
             });
         } finally {
-            set({ deleteChatLoading: false });
+            set({ deleteChatLoadingId: null });
+        }
+    },
+
+    createGroupChat: async (groupName) => {
+        set({ createGroupChatLoading: true });
+        try {
+            const res = await API.post(`/chat/group`, {
+                participantIds: [...get().participantsToCreateGroup],
+                groupName,
+            });
+            const { data } = getResData(res);
+
+            console.log(data);
+
+            set((state) => {
+                return {
+                    normalChatsList: [...(state.normalChatsList || []), data],
+                };
+            });
+
+            useApp.getState().setActiveSidePanel("chatsPanel");
+        } catch (error) {
+            const { message } = getErrData(error);
+            addToast({
+                description: message,
+                type: "error",
+                priority: "high",
+            });
+        } finally {
+            set({ createGroupChatLoading: false });
         }
     },
 
     archiveChat: async (chatId) => {
-        set({ archiveChatLoading: true });
+        set({ archiveChatLoadingId: chatId });
         try {
             await API.post(`/chat/${chatId}/archive`);
             set((state) => {
@@ -168,12 +213,12 @@ export const useChat = create((set, get) => ({
                 priority: "high",
             });
         } finally {
-            set({ archiveChatLoading: false });
+            set({ archiveChatLoadingId: null });
         }
     },
 
     unarchiveChat: async (chatId) => {
-        set({ unarchiveChatLoading: true });
+        set({ unarchiveChatLoadingId: chatId });
         try {
             await API.post(`/chat/${chatId}/un-archive`);
             set((state) => {
@@ -200,7 +245,7 @@ export const useChat = create((set, get) => ({
                 priority: "high",
             });
         } finally {
-            set({ unarchiveChatLoading: false });
+            set({ unarchiveChatLoadingId: null });
         }
     },
 }));

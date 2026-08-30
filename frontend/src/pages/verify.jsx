@@ -34,11 +34,17 @@ const Verify = () => {
         sendVerifyEmail();
     };
 
-    const handleVerifyEmail = () => {
+    const handleSubmit = () => {
         if (otp.length !== 6) {
             return;
         }
         verifyEmail(otp);
+    };
+
+    const handleEnterKey = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit(e);
+        }
     };
 
     return (
@@ -55,51 +61,53 @@ const Verify = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Field>
-                        <div className="flex items-center justify-between">
-                            <FieldLabel htmlFor="otp-verification">
-                                Verification code
-                            </FieldLabel>
-                            <Button
-                                disabled={sendEmailLoading}
-                                variant="outline"
-                                size="xs"
-                                onClick={() => handleSendEmail()}
-                            >
-                                {sendEmailLoading ? (
-                                    <Spinner size="3" />
-                                ) : (
-                                    <RefreshCwIcon />
-                                )}
-                                Resend Code
-                            </Button>
-                        </div>
-                        <div className="my-4 flex w-full justify-center">
-                            <InputOTP
-                                maxLength={6}
-                                id="otp-verification"
-                                required
-                                pattern={REGEXP_ONLY_DIGITS}
-                                value={otp}
-                                onChange={(prev) => setOTP(prev)}
-                            >
-                                <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-                                    <InputOTPSlot index={0} />
-                                    <InputOTPSlot index={1} />
-                                </InputOTPGroup>
-                                <InputOTPSeparator className="mx-2" />
-                                <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-                                    <InputOTPSlot index={2} />
-                                    <InputOTPSlot index={3} />
-                                </InputOTPGroup>
-                                <InputOTPSeparator className="mx-2" />
-                                <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
-                                    <InputOTPSlot index={4} />
-                                    <InputOTPSlot index={5} />
-                                </InputOTPGroup>
-                            </InputOTP>
-                        </div>
-                    </Field>
+                    <form onKeyDown={handleEnterKey}>
+                        <Field>
+                            <div className="flex items-center justify-between">
+                                <FieldLabel htmlFor="otp-verification">
+                                    Verification code
+                                </FieldLabel>
+                                <Button
+                                    disabled={sendEmailLoading}
+                                    variant="outline"
+                                    size="xs"
+                                    onClick={() => handleSendEmail()}
+                                >
+                                    {sendEmailLoading ? (
+                                        <Spinner size="3" />
+                                    ) : (
+                                        <RefreshCwIcon />
+                                    )}
+                                    Send Code
+                                </Button>
+                            </div>
+                            <div className="my-4 flex w-full justify-center">
+                                <InputOTP
+                                    maxLength={6}
+                                    id="otp-verification"
+                                    required
+                                    pattern={REGEXP_ONLY_DIGITS}
+                                    value={otp}
+                                    onChange={(prev) => setOTP(prev)}
+                                >
+                                    <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                                        <InputOTPSlot index={0} />
+                                        <InputOTPSlot index={1} />
+                                    </InputOTPGroup>
+                                    <InputOTPSeparator className="mx-2" />
+                                    <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                                        <InputOTPSlot index={2} />
+                                        <InputOTPSlot index={3} />
+                                    </InputOTPGroup>
+                                    <InputOTPSeparator className="mx-2" />
+                                    <InputOTPGroup className="*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                                        <InputOTPSlot index={4} />
+                                        <InputOTPSlot index={5} />
+                                    </InputOTPGroup>
+                                </InputOTP>
+                            </div>
+                        </Field>
+                    </form>
                 </CardContent>
                 <Separator />
                 <CardFooter>
@@ -108,7 +116,7 @@ const Verify = () => {
                             disabled={verifyEmailLoading}
                             type="submit"
                             className="w-full"
-                            onClick={() => handleVerifyEmail()}
+                            onClick={() => handleSubmit()}
                         >
                             Verify
                             {verifyEmailLoading && (

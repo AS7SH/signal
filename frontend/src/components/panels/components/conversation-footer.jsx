@@ -2,12 +2,25 @@ import PlusIcon from "@/assets/plus-icon";
 import SendIcon from "@/assets/send-icon";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useApp } from "@/hooks/use-app";
+import { useChat } from "@/hooks/use-chat";
 import { useMessage } from "@/hooks/use-message";
+import { useEffect, useRef } from "react";
 
 const ConversationFooter = () => {
     const message = useMessage((state) => state.message);
     const setMessage = useMessage((state) => state.setMessage);
     const sendMessage = useMessage((state) => state.sendMessage);
+    const conversation = useChat((state) => state.conversation);
+    const activeSidePanel = useApp((state) => state.activeSidePanel);
+
+    const inputRef = useRef(null);
+
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [conversation, activeSidePanel]);
 
     const handleSendMessage = () => {
         if (message.trim() === "") {
@@ -35,6 +48,7 @@ const ConversationFooter = () => {
                 </Button>
 
                 <Textarea
+                    ref={inputRef}
                     placeholder="Type a message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
@@ -44,6 +58,7 @@ const ConversationFooter = () => {
                 />
 
                 <Button
+                    disabled={message.trim() === ""}
                     variant="ghost"
                     size="icon"
                     className="shrink-0 rounded-full text-muted-foreground hover:text-foreground h-10 w-10 mb-0.5"

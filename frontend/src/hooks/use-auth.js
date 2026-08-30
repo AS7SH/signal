@@ -170,14 +170,8 @@ export const useAuth = create((set, get) => ({
 
     refresh: async () => {
         set({ isCheckingAuth: true });
-        const minimumDelay = new Promise((resolve) =>
-            setTimeout(resolve, 2000),
-        );
         try {
-            const [res] = await Promise.all([
-                API.post("/auth/refresh"),
-                minimumDelay,
-            ]);
+            const res = await API.post("/auth/refresh");
             const { data } = getResData(res);
             set({ accessToken: data?.accessToken, user: data.user });
         } catch (error) {

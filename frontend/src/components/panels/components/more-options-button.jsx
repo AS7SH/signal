@@ -16,17 +16,51 @@ import {
 import { moreOptionsData } from "@/data/more-options-data";
 import { useApp } from "@/hooks/use-app";
 import { useChat } from "@/hooks/use-chat";
+import { useFriend } from "@/hooks/use-friend";
+import { useState } from "react";
 
-const MoreOptionsButton = ({ moreOptionsFor, chatId }) => {
-    const data = moreOptionsData({ chatId })[moreOptionsFor];
+const MoreOptionsButton = ({ moreOptionsFor, id }) => {
+    const data = moreOptionsData()[moreOptionsFor];
 
-    const archiveChatLoading = useChat((state) => state.archiveChatLoading);
-    const unarchiveChatLoading = useChat((state) => state.unarchiveChatLoading);
-    const deleteChatLoading = useChat((state) => state.deleteChatLoading);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const archiveChatLoadingId = useChat((state) => state.archiveChatLoadingId);
+    const unarchiveChatLoadingId = useChat(
+        (state) => state.unarchiveChatLoadingId,
+    );
+    const deleteChatLoadingId = useChat((state) => state.deleteChatLoadingId);
+    const sendFriendRequestLoadingId = useFriend(
+        (state) => state.sendFriendRequestLoadingId,
+    );
+    const acceptFriendRequestLoadingId = useFriend(
+        (state) => state.acceptFriendRequestLoadingId,
+    );
+    const rejectFriendRequestLoadingId = useFriend(
+        (state) => state.rejectFriendRequestLoadingId,
+    );
+    const cancelFriendRequestLoadingId = useFriend(
+        (state) => state.cancelFriendRequestLoadingId,
+    );
+    const unblockUserLoadingId = useFriend(
+        (state) => state.unblockUserLoadingId,
+    );
+    const blockUserLoadingId = useFriend((state) => state.blockUserLoadingId);
+
+    const isLoading = [
+        archiveChatLoadingId,
+        unarchiveChatLoadingId,
+        deleteChatLoadingId,
+        sendFriendRequestLoadingId,
+        acceptFriendRequestLoadingId,
+        rejectFriendRequestLoadingId,
+        cancelFriendRequestLoadingId,
+        unblockUserLoadingId,
+        blockUserLoadingId,
+    ].includes(id);
 
     return (
         <div>
-            <DropdownMenu>
+            <DropdownMenu onOpenChange={setIsOpen}>
                 <Tooltip>
                     <TooltipTrigger
                         render={
@@ -35,11 +69,9 @@ const MoreOptionsButton = ({ moreOptionsFor, chatId }) => {
                                     <Button
                                         variant={data.style ? "ghost" : "link"}
                                         size="icon-lg"
+                                        disabled={isLoading}
                                     >
-                                        {(archiveChatLoading ||
-                                            unarchiveChatLoading ||
-                                            deleteChatLoading) &&
-                                        moreOptionsFor === "chatItem" ? (
+                                        {isLoading ? (
                                             <Spinner size="3" />
                                         ) : (
                                             <data.icon className="size-5" />
@@ -55,31 +87,34 @@ const MoreOptionsButton = ({ moreOptionsFor, chatId }) => {
                 </Tooltip>
                 <DropdownMenuContent className="max-w-xl w-full">
                     <DropdownMenuGroup>
-                        {data.options?.map((item, index) => (
-                            <div key={index}>
-                                <DropdownMenuItem
-                                    onSelect={(e) => {
-                                        e.preventDefault();
-                                    }}
-                                    variant={item?.type}
-                                    onClick={() =>
-                                        item.action
-                                            ? item.action()
-                                            : useApp
-                                                  .getState()
-                                                  .setActiveSidePanel(
-                                                      item?.name,
-                                                  )
-                                    }
-                                >
-                                    <item.icon className="size-5" />
-                                    {item.title}
-                                </DropdownMenuItem>
-                                {item?.hasSeparater && (
-                                    <DropdownMenuSeparator />
-                                )}
-                            </div>
-                        ))}
+                        {isOpen &&
+                            data.getOptions(id)?.map((item, index) =>
+                                item.hide ? null : (
+                                    <div key={index}>
+                                        <DropdownMenuItem
+                                            onSelect={(e) => {
+                                                e.preventDefault();
+                                            }}
+                                            variant={item?.type}
+                                            onClick={() =>
+                                                item.action
+                                                    ? item.action()
+                                                    : useApp
+                                                          .getState()
+                                                          .setActiveSidePanel(
+                                                              item?.name,
+                                                          )
+                                            }
+                                        >
+                                            <item.icon className="size-5" />
+                                            {item.title}
+                                        </DropdownMenuItem>
+                                        {item?.hasSeparater && (
+                                            <DropdownMenuSeparator />
+                                        )}
+                                    </div>
+                                ),
+                            )}
                     </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>

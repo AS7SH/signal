@@ -67,6 +67,12 @@ const Signup = () => {
         }
     };
 
+    const handleEnterKey = (e) => {
+        if (e.key === "Enter") {
+            handleSubmit(e);
+        }
+    };
+
     return (
         <div className="w-full">
             <Card>
@@ -79,7 +85,7 @@ const Signup = () => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <form>
+                    <form onKeyDown={handleEnterKey}>
                         <div className="flex flex-col gap-6">
                             <UsernameCheckInputTrigger />
                             <div className="grid gap-2">
@@ -127,7 +133,7 @@ const Signup = () => {
                             className="w-full"
                             onClick={(e) => handleSubmit(e)}
                         >
-                            Submit{" "}
+                            Signup{" "}
                             {signupLoading && <Spinner className="size-4" />}
                         </Button>
                         <div>
