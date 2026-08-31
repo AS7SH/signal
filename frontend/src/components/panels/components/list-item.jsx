@@ -9,6 +9,7 @@ const ListItem = ({
     trailingWidget,
     onClick,
     isActive,
+    time,
 }) => {
     return (
         <div
@@ -30,11 +31,18 @@ const ListItem = ({
                     {title}
                 </span>
 
-                {subtitle && (
-                    <span className="truncate text-xs text-muted-foreground">
-                        {subtitle}
-                    </span>
-                )}
+                <div className="flex justify-between items-center w-full">
+                    {subtitle && (
+                        <span className="truncate text-xs text-muted-foreground">
+                            {subtitle}
+                        </span>
+                    )}
+                    {time && (
+                        <span className="text-[10px] text-muted-foreground ml-2 shrink-0">
+                            {time}
+                        </span>
+                    )}
+                </div>
             </div>
 
             {trailingWidget && (

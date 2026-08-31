@@ -20,6 +20,7 @@ export const useAuth = create((set, get) => ({
 
     setUsername: (username) => set({ username, isUsernameAvailable: null }),
     setAccessToken: (token) => set({ accessToken: token }),
+    setUser: (user) => set({ user: user }),
     // clearAuth: () => set({ accessToken: null, user: null }),
 
     checkUsername: async (username) => {

@@ -41,7 +41,7 @@ const ConversationContent = () => {
     }, []);
 
     return (
-        <div className="flex flex-col h-full w-full p-4">
+        <div className="flex flex-col h-full w-full min-w-0 overflow-x-hidden p-4">
             {messages.length === 0 ? (
                 <div className="flex flex-1 justify-center items-center">
                     <Marker className="flex justify-center shimmer">
@@ -68,12 +68,12 @@ const ConversationContent = () => {
                                 </MessageAvatar>
                             )}
                             <MessageContent>
-                                {!group.isMe && (
+                                {chat.isGroup && !group.isMe && (
                                     <MessageHeader>
                                         {group.sender.name}
                                     </MessageHeader>
                                 )}
-                                <BubbleGroup>
+                                <BubbleGroup className="w-full">
                                     {group.messages.map((msg) => (
                                         <Bubble
                                             variant={

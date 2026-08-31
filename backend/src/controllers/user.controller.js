@@ -24,6 +24,7 @@ export const updateUserController = asyncHandler(async (req, res) => {
     const body = updateUserValidator.parse(req.body);
 
     const response = await updateUserService(body, _id);
+
     return sendResponse(res, true, 200, "updated user successfully", response);
 });
 

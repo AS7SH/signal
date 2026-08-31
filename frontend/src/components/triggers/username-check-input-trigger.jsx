@@ -36,7 +36,7 @@ const UsernameCheckInputTrigger = () => {
 
     return (
         <>
-            <div className="grid gap-2">
+            <div className="grid gap-2 w-full">
                 <Label htmlFor="username">Username</Label>
                 <InputGroup>
                     <InputGroupInput

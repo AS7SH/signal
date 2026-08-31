@@ -60,6 +60,5 @@ export const sidebarData = () => {
 };
 
 const AvatarLink = () => {
-    const data = sidebarData();
-    return <ProfileImage src={data.user?.avatar} alt={data.user?.name} />;
+    return <ProfileImage isUserAvatar={true} />;
 };
